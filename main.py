@@ -8,8 +8,7 @@ import buttons
 import texts
 from number_of_common_numbers import pre_main_menu_number_of_common_numbers, router as ft_router
 
-
-API_TOKEN = '6918083318:AAHwyNPy9e9iwaxQ6OZnO1wxrEzb9zNhsZg'
+API_TOKEN = '*'
 tg_bot = Bot(token=API_TOKEN, parse_mode='HTML')
 disp = Dispatcher(bot=tg_bot)
 users_dict = dict()
@@ -28,8 +27,11 @@ class FSMMathTasks(StatesGroup):
     third_task = State()
 
 
+state = 'default_state'
+
+
 @disp.message(Command('start'))
-async def welcome_message(message: Message, state: FSMContext):
+async def welcome_message(message: Message, state_with_pattern: FSMContext):
     """
     Функция реализующая вывод приветственного меню и начальную инициализацию информации о пользователе.
     """
@@ -39,7 +41,9 @@ async def welcome_message(message: Message, state: FSMContext):
         text=texts.welcome_message,
         reply_markup=buttons.welcome_menu()
     )
-    await state.set_state(FSMMathTasks.default_state)
+    global state
+    state = 'info'
+    await state_with_pattern.set_state(FSMMathTasks.default_state)
 
 
 @disp.message(Command('tasks'), StateFilter(FSMMathTasks.default_state, FSMMathTasks.ready_to_tasks))
@@ -183,7 +187,11 @@ async def other_messages(message: Message):
     """
     await message.reply(text='🤔 Я не знаю такой команды.')
 
+disp.message.register(
+    other_messages, state == 'default_state', state == 'info', state == 'pass_auth',
+    state == 'ready_to_tasks', state == 'tasks'
+)
 
 if __name__ == '__main__':
     disp.include_router(ft_router)
-    disp.run_polling(tg_bot, close_bot_session=True)
+    disp.run_polling(tg_bot)
