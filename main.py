@@ -9,7 +9,7 @@ import texts
 from number_of_common_numbers import pre_main_menu_number_of_common_numbers, router as ft_router
 
 
-API_TOKEN = '6918083318:AAHwyNPy9e9iwaxQ6OZnO1wxrEzb9zNhsZg'
+API_TOKEN = '*'
 tg_bot = Bot(token=API_TOKEN, parse_mode='HTML')
 disp = Dispatcher(bot=tg_bot)
 users_dict = dict()
